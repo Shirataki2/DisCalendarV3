@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'discord';
+  src: url('assets/fonts/UniSansHeavy.otf') format('opentype');
+}
+
+.select-none {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.pointer {
+  &-cursor {
+    cursor: pointer;
+  }
+  &-grab {
+    cursor: grab;
+    :active {
+      cursor: grabbing;
+    }
+  }
+}

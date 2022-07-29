@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "cross-env PORT=6655 HOST=0.0.0.0 nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "start": "cross-env PORT=6655 nuxt start",
+    "lint": "eslint --ext .ts,.js,.vue ."
+  },
+  "devDependencies": {
+    "@mdi/font": "^7.0.96",
+    "@mdi/js": "^7.0.96",
+    "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "@vuetify/vite-plugin": "^1.0.0-alpha.11",
+    "cross-env": "^7.0.3",
+    "discord.js": "^14.0.3",
+    "eslint": "^8.20.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "nuxt": "3.0.0-rc.6",
+    "nuxt-proxy": "^0.2.3",
+    "prettier": "^2.7.1",
+    "sass": "^1.54.0",
+    "typescript": "^4.7.4",
+    "vuetify": "^3.0.0-beta.5"
+  },
+  "dependencies": {
+    "eslint-plugin-prettier": "^4.2.1"
+  }
+}
