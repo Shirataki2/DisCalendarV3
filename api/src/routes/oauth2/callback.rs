@@ -1,15 +1,15 @@
-use crate::{auth_client::OAuth2Client, discord::Client, error::Error, routes::get_data};
+use crate::{
+    auth_client::OAuth2Client,
+    discord::Client,
+    error::Error,
+    routes::{
+        get_data,
+        oauth2::{get_auth_code, OAuth2Query},
+    },
+};
 use actix_session::Session;
 use actix_web::{http::header, web, HttpRequest, HttpResponse};
 use oauth2::{reqwest::async_http_client, AuthorizationCode, CsrfToken, PkceCodeVerifier};
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct OAuth2Query {
-    code: Option<String>,
-    state: Option<String>,
-    error: Option<String>,
-    error_description: Option<String>,
-}
 
 #[get("/callback")]
 async fn process_callback(
@@ -80,17 +80,4 @@ async fn process_callback(
     Ok(HttpResponse::Found()
         .append_header((header::LOCATION, front_url))
         .finish())
-}
-
-fn get_auth_code(query: &web::Query<OAuth2Query>) -> Option<(String, String)> {
-    match (&query.code, &query.state) {
-        (Some(code), Some(state)) => Some((code.clone(), state.clone())),
-        _ => {
-            info!(
-                "OAuth2 Error: {:?} {:?}",
-                query.error, query.error_description
-            );
-            None
-        }
-    }
 }

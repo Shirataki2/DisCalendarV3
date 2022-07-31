@@ -6,7 +6,7 @@ use crate::{auth_client::OAuth2Client, error::Error, routes::get_data};
 #[get("/login")]
 pub async fn login(sess: Session, req: HttpRequest) -> Result<HttpResponse, Error> {
     let auth = get_data::<OAuth2Client>(&req)?;
-    let pkce = auth.create_pkce_auth_url();
+    let pkce = auth.create_pkce_auth_url(&[]);
     sess.insert("verifier", pkce.verifier)?;
     sess.insert("csrf_token", pkce.csrf_token)?;
     Ok(HttpResponse::Found()

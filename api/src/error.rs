@@ -16,6 +16,8 @@ pub enum Error {
     Anyhow(#[from] anyhow::Error),
     #[error("Internal Connection Error: {0}")]
     Reqwest(#[from] reqwest::Error),
+    #[error("Database Error: {0}")]
+    DatabaseError(#[from] sea_orm::DbErr),
 }
 
 pub fn create_error(msg: &str) -> Error {

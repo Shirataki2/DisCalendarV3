@@ -3,14 +3,18 @@ import { defineNuxtConfig } from 'nuxt'
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   typescript: {
-    shim: false,
     strict: true,
   },
-  css: ['@/assets/styles/main.scss', 'vuetify/styles'],
+  css: [
+    '@/assets/styles/main.scss',
+    '@/assets/styles/calendar.scss',
+    'vuetify/styles',
+    'vue-cal/dist/vuecal.css',
+  ],
   build: {
     transpile: ['vuetify'],
   },
-  modules: ['nuxt-proxy'],
+  modules: ['nuxt-proxy', '@vueuse/nuxt'],
   vite: {
     define: {
       'process.env.DEBUG': false,

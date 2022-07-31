@@ -1,35 +1,27 @@
 <script lang="ts" setup>
 import { mdiThemeLightDark } from '@mdi/js'
 import { useTheme } from 'vuetify'
+import DatePicker from '~~/components/calendar/DatePicker.vue'
+import NavDrawer from '~~/components/application/NavDrawer.vue'
 
 const theme = useTheme()
-const { fetchUser, isLoggedin } = useAuth()
-
+const { fetchUser, logout } = useAuth()
+const showDrawer = ref(false)
 const toggleTheme = () => {
   theme.global.name.value =
     theme.global.name.value === 'myLightTheme' ? 'myDarkTheme' : 'myLightTheme'
 }
 
-const login = () => {
-  window.location.href = 'api/login'
-}
-
-const move = () => {
+const isCalendarPage = computed(() => {
   const route = useRoute()
-  const router = useRouter()
-  if (route.path === '/') {
-    router.push('/tmp')
-  } else {
-    router.push('/')
-  }
-}
+  return route.path.match(/^\/servers\/\d+$/) !== null
+})
 
 onMounted(async () => {
   try {
     await fetchUser()
   } catch {
-    const user = useUser()
-    user.value = null
+    logout()
   }
 })
 </script>
@@ -37,14 +29,16 @@ onMounted(async () => {
 <template>
   <v-layout>
     <v-app-bar app flat density="compact" color="primary">
+      <template #prepend>
+        <v-app-bar-nav-icon @click="showDrawer = !showDrawer" />
+      </template>
       <v-app-bar-title>
         <NuxtLink id="title" to="/">DisCalendar v3</NuxtLink>
       </v-app-bar-title>
+      <DatePicker v-if="isCalendarPage" />
+      <v-spacer />
       <template #append>
         <v-btn :icon="mdiThemeLightDark" @click="toggleTheme"></v-btn>
-        <v-btn v-if="!isLoggedin" flat @click="login">login</v-btn>
-        <v-btn v-if="isLoggedin" flat to="/logout">logout</v-btn>
-        <v-btn flat @click="move">move</v-btn>
       </template>
     </v-app-bar>
     <v-main>
@@ -53,6 +47,7 @@ onMounted(async () => {
     <v-footer app>
       v3.0.0<v-spacer /> &copy; {{ new Date().getFullYear() }} FF
     </v-footer>
+    <NavDrawer v-model="showDrawer" />
   </v-layout>
 </template>
 

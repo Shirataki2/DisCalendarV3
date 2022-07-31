@@ -1,0 +1,68 @@
+.vuecal {
+  &__cell--today, &__cell--current {
+    background-color: #5a5aff3f !important;
+    z-index: 1;
+  }
+  &__cell--selected {
+    background-color: #42ff5b33 !important;
+    z-index: 1;
+  }
+  &__weekdays-headings {
+      padding-right: 0;
+  }
+  &__no-event {
+    display: none;
+  }
+  &__event{
+    &-title {
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    &-time {
+      font-size: 0.6rem;
+    }
+    &-content {
+      font-size: 0.5rem;
+    }
+    &.red {
+      background-color:  rgba($color: #ff4646, $alpha: 0.9);
+      border-radius: 5px;
+      color: white;
+    }
+  }
+
+  &--month-view {
+
+    .vuecal {
+      &__cell-content {
+        justify-content: flex-start !important;
+        height: 100%;
+        align-items: flex-end;
+      }
+      &__cell-date {
+        padding: 6px;
+      }
+      &__no-event {
+        display: none;
+      }
+    }
+  }
+  &--week-view {
+    .vuecal__weekdays-headings {
+      @media (min-width: 500px) {
+        padding-right: 16px;
+      }
+      @media (max-width: 500px) {
+        padding-right: 0px;
+      }
+    }
+  }
+  &__flex {
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

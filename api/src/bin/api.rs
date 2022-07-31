@@ -31,25 +31,41 @@ async fn main() -> anyhow::Result<()> {
         .unwrap();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let pool = sqlx::PgPool::connect(&database_url)
+    let pool = sea_orm::Database::connect(&database_url)
         .await
         .context("Failed to connect to database")?;
 
     let secret_key = get_secret_key();
 
-    let auth = api::auth_client::OAuth2Client::new(
+    let app_secret = yup_oauth2::read_application_secret("credentials.json")
+        .await
+        .expect("Failed to read application secret");
+    let google_auth = Box::new(api::auth_client::OAuth2Client::new(
+        app_secret.client_id.to_string(),
+        app_secret.client_secret.to_string(),
+        "https://accounts.google.com/o/oauth2/v2/auth".to_string(),
+        "https://www.googleapis.com/oauth2/v3/token".to_string(),
+        "http://localhost:15000/oauth2/google/callback".to_string(),
+        "https://oauth2.googleapis.com/revoke".to_string(),
+        vec!["https://www.googleapis.com/auth/calendar".to_string()],
+    ));
+
+    let discord_auth = api::auth_client::OAuth2Client::new(
         std::env::var("DISCORD_CLIENT_ID").unwrap(),
         std::env::var("DISCORD_CLIENT_SECRET").unwrap(),
         "https://discordapp.com/api/oauth2/authorize".to_string(),
         "https://discordapp.com/api/oauth2/token".to_string(),
         std::env::var("DISCORD_REDIRECT_URI").unwrap(),
+        "https://discord.com/api/oauth2/token/revoke".to_string(),
         vec!["identify".to_string(), "guilds".to_string()],
     );
 
     let server = HttpServer::new(move || {
         App::new()
-            .app_data(auth.clone())
+            .app_data(google_auth.clone())
+            .app_data(discord_auth.clone())
             .app_data(pool.clone())
+            .app_data(app_secret.clone())
             .wrap(Logger::default())
             .wrap(SessionMiddleware::new(
                 RedisActorSessionStore::new("redis:6379"),

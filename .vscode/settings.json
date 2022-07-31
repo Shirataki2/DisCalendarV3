@@ -6,5 +6,8 @@
   "editor.formatOnSave": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "rust-analyzer.server.extraEnv": {
+    "DATABASE_URL": "postgres://postgres:HExzY60WAJbYHDDbpikA3m7klVXEyXuW@localhost:15432/discalv3"
   }
 }

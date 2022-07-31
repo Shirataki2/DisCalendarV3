@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-const user = useUser()
+const { logout } = useAuth()
 
 onMounted(() => {
-  user.value = null
+  logout()
   window.location.href = 'api/logout'
 })
 </script>

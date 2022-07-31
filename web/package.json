@@ -5,6 +5,7 @@
     "dev": "cross-env PORT=6655 HOST=0.0.0.0 nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "analyze": "cross-env PORT=6655 nuxt analyze",
     "start": "cross-env PORT=6655 nuxt start",
     "lint": "eslint --ext .ts,.js,.vue ."
   },
@@ -15,8 +16,11 @@
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "@vue/eslint-config-prettier": "^7.0.0",
+    "@vuepic/vue-datepicker": "^3.3.1",
     "@vuetify/vite-plugin": "^1.0.0-alpha.11",
+    "@vueuse/nuxt": "^9.0.2",
     "cross-env": "^7.0.3",
+    "dayjs": "^1.11.4",
     "discord.js": "^14.0.3",
     "eslint": "^8.20.0",
     "eslint-plugin-vue": "^9.3.0",
@@ -25,6 +29,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.54.0",
     "typescript": "^4.7.4",
+    "vue-cal": "^4.3.4",
     "vuetify": "^3.0.0-beta.5"
   },
   "dependencies": {
