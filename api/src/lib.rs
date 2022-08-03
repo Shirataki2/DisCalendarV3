@@ -9,7 +9,7 @@ extern crate getset;
 
 use oauth2::{basic::BasicTokenType, EmptyExtraTokenFields, StandardTokenResponse};
 pub mod serenity_models {
-    pub use serenity::model::{id::GuildId, user::CurrentUser, Permissions};
+    pub use serenity::model::{channel::Channel, id::GuildId, user::CurrentUser, Permissions};
 
     #[derive(Clone, Debug, Deserialize, Serialize)]
     pub struct GuildInfo {
@@ -29,3 +29,8 @@ pub mod error;
 pub mod models;
 pub mod prelude;
 pub mod routes;
+
+#[derive(Debug, Clone)]
+pub struct AppData {
+    pub discord_bot_token: String,
+}

@@ -1,4 +1,5 @@
 import { createVuetify, ThemeDefinition } from 'vuetify'
+import { ja } from 'vuetify/locale'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -6,7 +7,7 @@ import * as directives from 'vuetify/directives'
 const myLightTheme: ThemeDefinition = {
   dark: false,
   colors: {
-    primary: '#455A64',
+    primary: '#3A7BD5',
     secondary: '#8BC34A',
     background: '#F5F5F5',
     surface: '#FFFFFF',
@@ -47,6 +48,12 @@ export default defineNuxtPlugin(nuxtApp => {
       aliases,
       sets: {
         mdi,
+      },
+    },
+    locale: {
+      defaultLocale: 'ja',
+      messages: {
+        ja,
       },
     },
   })

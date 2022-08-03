@@ -68,6 +68,23 @@ impl Client {
             ))
         }
     }
+
+    pub async fn fetch_guild_channels(
+        &self,
+        guild_id: &str,
+    ) -> Result<Vec<serenity_models::Channel>, Error> {
+        let url = format!("{}/guilds/{}/channels", self.base_url(), guild_id);
+        let resp = self.inner.get(&url).send().await?;
+        if resp.status().is_success() {
+            let channels = resp.json::<Vec<serenity_models::Channel>>().await?;
+            Ok(channels)
+        } else {
+            Err(Error::CustomStatus(
+                resp.status(),
+                format!("{:?}", resp.bytes().await?),
+            ))
+        }
+    }
 }
 
 impl AsRef<reqwest::Client> for Client {

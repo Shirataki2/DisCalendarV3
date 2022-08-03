@@ -1,4 +1,6 @@
-pub use crate::{discord::Client, error::Error, serenity_models, AuthToken};
+pub use crate::{
+    discord::Client, error::Error, routes::get_data, serenity_models, AppData, AuthToken,
+};
 pub use actix_session::Session;
 pub use actix_web::{
     http::header,

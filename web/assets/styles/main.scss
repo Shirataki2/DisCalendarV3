@@ -16,10 +16,18 @@
   &-cursor {
     cursor: pointer;
   }
+  &-disabled {
+    cursor: not-allowed;
+  }
   &-grab {
     cursor: grab;
     :active {
       cursor: grabbing;
     }
   }
+}
+
+.small-note {
+  font-size: 0.8rem;
+  color: #8c8c8c;
 }

@@ -8,6 +8,7 @@ import {
   mdiLogout,
 } from '@mdi/js'
 import { useTheme } from 'vuetify'
+import { Discord } from '@/types'
 import ServerNav from '@/components/application/ServerNav.vue'
 
 const theme = useTheme()
@@ -65,6 +66,13 @@ const items = ref<Item[]>([
     to: '/logout',
     icon: mdiLogout,
     login: true,
+  },
+  {
+    ty: 'link',
+    title: 'サポートサーバー',
+    to: 'https://discord.gg/MyaZRuze23',
+    icon: Discord.iconSvg,
+    external: true,
   },
   {
     ty: 'link',

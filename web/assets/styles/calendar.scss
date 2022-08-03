@@ -7,6 +7,21 @@
     background-color: #42ff5b33 !important;
     z-index: 1;
   }
+  &__cell--day6 {
+    color: #2196f3;
+  }
+  &__cell--day7 {
+    color: #f44336;
+  }
+  &__cell--out-of-scope {
+    color: #aaaa !important;
+    &.vuecal__cell--day6 {
+      color: #7eaace8e !important;
+    }
+    &.vuecal__cell--day7 {
+      color: #e4938d8e !important;
+    }
+  }
   &__weekdays-headings {
       padding-right: 0;
   }

@@ -6,7 +6,7 @@ extern crate actix_web;
 use actix_session::{storage::RedisActorSessionStore, SessionMiddleware};
 use actix_web::{cookie::Key, middleware::Logger, App, HttpServer};
 use anyhow::Context;
-use api::routes;
+use api::{prelude::*, routes};
 
 #[get("/")]
 async fn index() -> String {
@@ -60,12 +60,17 @@ async fn main() -> anyhow::Result<()> {
         vec!["identify".to_string(), "guilds".to_string()],
     );
 
+    let discord_bot_token = std::env::var("DISCORD_BOT_TOKEN").unwrap();
+
+    let app_data = AppData { discord_bot_token };
+
     let server = HttpServer::new(move || {
         App::new()
             .app_data(google_auth.clone())
             .app_data(discord_auth.clone())
             .app_data(pool.clone())
             .app_data(app_secret.clone())
+            .app_data(app_data.clone())
             .wrap(Logger::default())
             .wrap(SessionMiddleware::new(
                 RedisActorSessionStore::new("redis:6379"),

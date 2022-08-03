@@ -15,8 +15,11 @@ pub struct ServerListResponse {
 #[get("/list")]
 pub async fn guild_list(sess: Session, req: HttpRequest) -> Result<HttpResponse, Error> {
     // Authenticate the user
-    let auth_token = sess.get::<crate::AuthToken>("token")?;
-    let client = Client::from_token(&auth_token.unwrap())?;
+    let auth_token = match sess.get::<crate::AuthToken>("token")? {
+        Some(auth_token) => auth_token,
+        None => return Err(Error::Unauthorized("No auth token found".into())),
+    };
+    let client = Client::from_token(&auth_token)?;
     let conn = get_data::<DatabaseConnection>(&req)?;
 
     // Get the user's guilds
@@ -26,6 +29,7 @@ pub async fn guild_list(sess: Session, req: HttpRequest) -> Result<HttpResponse,
         .map(|g| g.id.0.to_string())
         .collect::<Vec<_>>();
 
+    sess.insert("guild_ids", guild_ids.clone())?;
     // Get the invited guilds from the database
     let invited_guilds = Guild::find()
         .filter(guild::Column::GuildId.is_in(guild_ids))

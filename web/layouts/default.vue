@@ -6,11 +6,15 @@ import NavDrawer from '~~/components/application/NavDrawer.vue'
 
 const theme = useTheme()
 const { fetchUser, logout } = useAuth()
-const showDrawer = ref(false)
+const showDrawer = ref<boolean | undefined>(undefined)
 const toggleTheme = () => {
   theme.global.name.value =
     theme.global.name.value === 'myLightTheme' ? 'myDarkTheme' : 'myLightTheme'
 }
+
+const headerColor = computed(() => {
+  return theme.global.name.value === 'myLightTheme' ? 'white' : 'primary'
+})
 
 const isCalendarPage = computed(() => {
   const route = useRoute()
@@ -28,7 +32,7 @@ onMounted(async () => {
 
 <template>
   <v-layout>
-    <v-app-bar app flat density="compact" color="primary">
+    <v-app-bar app flat density="compact" :color="headerColor">
       <template #prepend>
         <v-app-bar-nav-icon @click="showDrawer = !showDrawer" />
       </template>

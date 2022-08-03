@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import VueCal from 'vue-cal'
 import { mdiPlus } from '@mdi/js'
+import CreateEventDialog from '@/components/calendar/CreateEventDialog.vue'
 
 const { height } = useWindowSize()
 const { date, setDate, view: dateView } = useDate()
+const { dialog, setDialog } = useDialog()
 
 const calendarHeight = computed(() => {
   return `${height.value - 137}px`
 })
 
-const events = [
+const events = ref([
   {
     start: '2022-07-31 12:00',
     end: '2022-07-31 18:00',
@@ -17,7 +19,7 @@ const events = [
     class: 'red',
     content: 'Test',
   },
-]
+])
 
 const viewChange = ({
   startDate,
@@ -58,6 +60,8 @@ const dateAttr = (date: string) => {
             <vue-cal
               ref="vuecal"
               v-model:active-view="dateView"
+              click-to-navigate
+              :dblclick-to-navigate="false"
               hide-view-selector
               class="calendar"
               locale="ja"
@@ -123,10 +127,13 @@ const dateAttr = (date: string) => {
                   size="x-large"
                   class="floating-btn"
                   v-bind="props"
+                  style="z-index: 1000"
+                  @click="setDialog(true)"
                 >
                 </v-btn>
               </template>
               新規作成
+              <CreateEventDialog v-model="dialog" />
             </v-tooltip>
           </v-card>
         </v-col>

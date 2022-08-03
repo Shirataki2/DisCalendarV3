@@ -7,7 +7,8 @@
     "preview": "nuxt preview",
     "analyze": "cross-env PORT=6655 nuxt analyze",
     "start": "cross-env PORT=6655 nuxt start",
-    "lint": "eslint --ext .ts,.js,.vue ."
+    "lint": "eslint --ext .ts,.js,.vue .",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@mdi/font": "^7.0.96",
@@ -26,6 +27,7 @@
     "eslint-plugin-vue": "^9.3.0",
     "nuxt": "3.0.0-rc.6",
     "nuxt-proxy": "^0.2.3",
+    "patch-package": "^6.4.7",
     "prettier": "^2.7.1",
     "sass": "^1.54.0",
     "typescript": "^4.7.4",

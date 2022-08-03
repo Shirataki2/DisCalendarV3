@@ -12,6 +12,8 @@ pub enum Error {
     SessionInsertFailure(#[from] actix_session::SessionInsertError),
     #[error("Internal Server Error")]
     SessionGetFailure(#[from] actix_session::SessionGetError),
+    #[error("You are not authorized to perform this action")]
+    Forbidden,
     #[error("{0}")]
     Anyhow(#[from] anyhow::Error),
     #[error("Internal Connection Error: {0}")]
