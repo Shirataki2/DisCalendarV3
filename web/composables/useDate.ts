@@ -30,11 +30,17 @@ export const useDate = () => {
         return dayjs(date.value).format('YYYY年 M月 D日')
     }
   })
+
+  const formattedDay = computed(() => {
+    return dayjs(date.value).format('YYYY/M/D')
+  })
+
   return {
     date,
     view,
     setDate,
     formattedDate,
+    formattedDay,
   }
 }
 

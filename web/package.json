@@ -14,6 +14,7 @@
     "@mdi/font": "^7.0.96",
     "@mdi/js": "^7.0.96",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "@types/stripe": "^8.0.417",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "@vue/eslint-config-prettier": "^7.0.0",
@@ -30,8 +31,10 @@
     "patch-package": "^6.4.7",
     "prettier": "^2.7.1",
     "sass": "^1.54.0",
+    "stripe": "^10.2.0",
     "typescript": "^4.7.4",
     "vue-cal": "^4.3.4",
+    "vue3-hotkey": "^1.0.2",
     "vuetify": "^3.0.0-beta.5"
   },
   "dependencies": {

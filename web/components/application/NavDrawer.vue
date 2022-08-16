@@ -6,6 +6,7 @@ import {
   mdiGithub,
   mdiLogin,
   mdiLogout,
+  mdiGift,
 } from '@mdi/js'
 import { useTheme } from 'vuetify'
 import { Discord } from '@/types'
@@ -62,10 +63,9 @@ const items = ref<Item[]>([
   },
   {
     ty: 'link',
-    title: 'ログアウト',
-    to: '/logout',
-    icon: mdiLogout,
-    login: true,
+    title: '寄付',
+    to: '/donate',
+    icon: mdiGift,
   },
   {
     ty: 'link',
@@ -84,6 +84,13 @@ const items = ref<Item[]>([
 ])
 
 const appendItems = ref<Item[]>([
+  {
+    ty: 'link',
+    title: 'ログアウト',
+    to: '/logout',
+    icon: mdiLogout,
+    login: true,
+  },
   {
     ty: 'func',
     title: 'テーマ変更',

@@ -34,7 +34,9 @@ pub async fn channels(
         return Err(Error::Forbidden);
     }
 
-    let AppData { discord_bot_token } = get_data::<AppData>(&req)?;
+    let AppData {
+        discord_bot_token, ..
+    } = get_data::<AppData>(&req)?;
     let bot = Client::from_bot_token(discord_bot_token)?;
 
     let channels = bot.fetch_guild_channels(&channel_id).await?;

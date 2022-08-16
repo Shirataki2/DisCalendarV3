@@ -9,7 +9,10 @@ use crate::{
 };
 use actix_session::Session;
 use actix_web::{http::header, web, HttpRequest, HttpResponse};
-use oauth2::{reqwest::async_http_client, AuthorizationCode, CsrfToken, PkceCodeVerifier};
+use chrono::Utc;
+use oauth2::{
+    reqwest::async_http_client, AuthorizationCode, CsrfToken, PkceCodeVerifier, TokenResponse,
+};
 
 #[get("/callback")]
 async fn process_callback(
@@ -67,6 +70,17 @@ async fn process_callback(
 
     info!("OAuth2 Success: {:?}", &token_body);
     sess.insert("token", &token_body)?;
+
+    if let Some(duration) = token_body.expires_in() {
+        if let Err(e) = sess.insert(
+            "token_expires_at",
+            Utc::now()
+                + chrono::Duration::from_std(duration)
+                    .unwrap_or_else(|_| chrono::Duration::seconds(0)),
+        ) {
+            warn!("Error inserting token_expires_at: {}", e);
+        }
+    }
 
     let client = Client::from_token(&token_body)?;
     let user = client.fetch_current_user().await?;

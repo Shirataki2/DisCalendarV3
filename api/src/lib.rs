@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate actix_web;
 #[macro_use]
+extern crate serde_repr;
+#[macro_use]
 extern crate serde;
 #[macro_use]
 extern crate log;
@@ -9,7 +11,13 @@ extern crate getset;
 
 use oauth2::{basic::BasicTokenType, EmptyExtraTokenFields, StandardTokenResponse};
 pub mod serenity_models {
-    pub use serenity::model::{channel::Channel, id::GuildId, user::CurrentUser, Permissions};
+    pub use serenity::model::{
+        channel::Channel,
+        guild::{ScheduledEvent, ScheduledEventMetadata, ScheduledEventType},
+        id::GuildId,
+        user::CurrentUser,
+        Permissions,
+    };
 
     #[derive(Clone, Debug, Deserialize, Serialize)]
     pub struct GuildInfo {
@@ -32,5 +40,8 @@ pub mod routes;
 
 #[derive(Debug, Clone)]
 pub struct AppData {
+    pub api_base_url: String,
+    pub front_base_url: String,
     pub discord_bot_token: String,
+    pub stripe_secret_key: String,
 }

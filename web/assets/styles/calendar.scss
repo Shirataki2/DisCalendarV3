@@ -29,6 +29,7 @@
     display: none;
   }
   &__event{
+    background-color: transparent !important;
     &-title {
       font-size: 0.8rem;
       font-weight: bold;
@@ -38,11 +39,6 @@
     }
     &-content {
       font-size: 0.5rem;
-    }
-    &.red {
-      background-color:  rgba($color: #ff4646, $alpha: 0.9);
-      border-radius: 5px;
-      color: white;
     }
   }
 

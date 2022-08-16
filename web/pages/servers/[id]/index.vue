@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import VueCal from 'vue-cal'
+import { onBeforeRouteLeave } from 'vue-router'
 import { mdiPlus } from '@mdi/js'
 import CreateEventDialog from '@/components/calendar/CreateEventDialog.vue'
 
@@ -8,7 +9,7 @@ const { date, setDate, view: dateView } = useDate()
 const { dialog, setDialog } = useDialog()
 
 const calendarHeight = computed(() => {
-  return `${height.value - 137}px`
+  return `${height.value - 138}px`
 })
 
 const events = ref([
@@ -17,26 +18,28 @@ const events = ref([
     end: '2022-07-31 18:00',
     title: 'Event 1',
     class: 'red',
+    color: '#078990',
     content: 'Test',
   },
 ])
 
-const viewChange = ({
-  startDate,
-  endDate,
-}: {
-  startDate: Date
-  endDate: Date
-}) => {
-  const now = new Date()
-  const isIncludesNow =
-    startDate.getTime() <= now.getTime() && endDate.getTime() >= now.getTime()
-  if (isIncludesNow) {
-    setDate(now)
-  } else {
-    setDate(startDate)
-  }
-}
+// const viewChange = ({
+//   startDate,
+//   endDate,
+// }: {
+//   startDate: Date
+//   endDate: Date
+// }) => {
+//   const now = new Date()
+//   const isIncludesNow =
+//     startDate.getTime() <= now.getTime() && endDate.getTime() >= now.getTime()
+//   if (isIncludesNow) {
+//     setDate(now)
+//   } else {
+//     setDate(startDate)
+//   }
+//   console.log('b')
+// }
 
 const dateAttr = (date: string) => {
   switch (date) {
@@ -48,6 +51,25 @@ const dateAttr = (date: string) => {
       return 'day-weekday'
   }
 }
+
+onBeforeRouteLeave((_to, _from) => {
+  setDate(new Date())
+})
+
+// TODO: 型の定義を書く
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getStyle = (style: any) => {
+  const color = style.color
+  const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color)
+  const r = rgb ? parseInt(rgb[1], 16) : 0
+  const g = rgb ? parseInt(rgb[2], 16) : 0
+  const b = rgb ? parseInt(rgb[3], 16) : 0
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  return {
+    backgroundColor: color,
+    color: luminance > 160 ? '#000' : '#fff',
+  }
+}
 </script>
 
 <template>
@@ -55,13 +77,11 @@ const dateAttr = (date: string) => {
     <v-container>
       <v-row>
         <v-col lg="10" offset-lg="1" xxl="8" offset-xxl="2">
-          <v-card class="pa-2">
+          <v-card class="pa-1">
             <!-- eslint-disable vue/no-v-model-argument -->
             <vue-cal
               ref="vuecal"
               v-model:active-view="dateView"
-              click-to-navigate
-              :dblclick-to-navigate="false"
               hide-view-selector
               class="calendar"
               locale="ja"
@@ -78,7 +98,6 @@ const dateAttr = (date: string) => {
               }"
               :snap-to-time="15"
               :show-allday-events="'short'"
-              @view-change="viewChange($event)"
               @cell-focus="setDate($event)"
             >
               <template #title="{ view }">
@@ -107,6 +126,17 @@ const dateAttr = (date: string) => {
                 <span v-else-if="view.id === 'day'">{{
                   view.startDate.format('YYYY年M月D日 (dddd)')
                 }}</span>
+              </template>
+              <template #event="{ event, view }">
+                <div class="event-content" :style="getStyle(event)">
+                  <div class="vuecal__event-title">
+                    {{ event.title }}
+                  </div>
+                  <div v-if="view !== 'month'" class="vuecal__event-time">
+                    {{ event.start.format('HH:mm') }} -
+                    {{ event.end.format('HH:mm') }}
+                  </div>
+                </div>
               </template>
               <template #weekday-heading="{ heading, view }">
                 <span :class="dateAttr(heading['label'])">
@@ -158,6 +188,26 @@ const dateAttr = (date: string) => {
   }
   &-saturday {
     color: #2196f3;
+  }
+}
+
+.vuecal--week-view,
+.vuecal--day-view {
+  .event-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 8px;
+    border-radius: 6px;
+  }
+}
+
+.vuecal--month-view {
+  .event-content {
+    border-radius: 2px;
   }
 }
 </style>

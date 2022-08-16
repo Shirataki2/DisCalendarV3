@@ -3,7 +3,7 @@ use crate::{
     models::{guild, prelude::*},
     routes::get_data,
 };
-use sea_orm::{query::*, ColumnTrait, DatabaseConnection, EntityTrait};
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerListResponse {

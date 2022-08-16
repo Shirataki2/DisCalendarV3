@@ -60,9 +60,24 @@ async fn main() -> anyhow::Result<()> {
         vec!["identify".to_string(), "guilds".to_string()],
     );
 
+    let api_base_url =
+        std::env::var("API_BASE_URL").unwrap_or_else(|_| "http://localhost:15000".to_string());
+
+    let front_base_url =
+        std::env::var("FRONT_BASE_URL").unwrap_or_else(|_| "http://localhost:16655".to_string());
+
     let discord_bot_token = std::env::var("DISCORD_BOT_TOKEN").unwrap();
 
-    let app_data = AppData { discord_bot_token };
+    let stripe_secret_key = std::env::var("STRIPE_SECRET_KEY").unwrap();
+
+    let stripe_client = stripe::Client::new(&stripe_secret_key);
+
+    let app_data = AppData {
+        api_base_url,
+        front_base_url,
+        discord_bot_token,
+        stripe_secret_key,
+    };
 
     let server = HttpServer::new(move || {
         App::new()
@@ -71,6 +86,7 @@ async fn main() -> anyhow::Result<()> {
             .app_data(pool.clone())
             .app_data(app_secret.clone())
             .app_data(app_data.clone())
+            .app_data(stripe_client.clone())
             .wrap(Logger::default())
             .wrap(SessionMiddleware::new(
                 RedisActorSessionStore::new("redis:6379"),

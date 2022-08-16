@@ -3,6 +3,7 @@ import { mdiThemeLightDark } from '@mdi/js'
 import { useTheme } from 'vuetify'
 import DatePicker from '~~/components/calendar/DatePicker.vue'
 import NavDrawer from '~~/components/application/NavDrawer.vue'
+import LoadingBar from '~~/components/LoadingBar.vue'
 
 const theme = useTheme()
 const { fetchUser, logout } = useAuth()
@@ -44,12 +45,13 @@ onMounted(async () => {
       <template #append>
         <v-btn :icon="mdiThemeLightDark" @click="toggleTheme"></v-btn>
       </template>
+      <LoadingBar :duration="1000" />
     </v-app-bar>
     <v-main>
       <slot />
     </v-main>
     <v-footer app>
-      v3.0.0<v-spacer /> &copy; {{ new Date().getFullYear() }} FF
+      v3.0.0-α1<v-spacer /> &copy; {{ new Date().getFullYear() }} FF
     </v-footer>
     <NavDrawer v-model="showDrawer" />
   </v-layout>

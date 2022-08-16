@@ -1,4 +1,5 @@
 use anyhow::Context;
+use chrono::NaiveDateTime;
 use oauth2::TokenResponse;
 use reqwest::header;
 
@@ -85,10 +86,191 @@ impl Client {
             ))
         }
     }
+
+    #[allow(clippy::too_many_arguments)]
+    pub async fn create_scheduled_non_external_event(
+        &self,
+        guild_id: &str,
+        is_stage: bool,
+        channel_id: &str,
+        title: &str,
+        description: Option<&str>,
+        start_time: NaiveDateTime,
+        end_time: Option<NaiveDateTime>,
+        image: Option<&str>,
+    ) -> Result<serenity_models::ScheduledEvent, Error> {
+        let payload = CreateScheduledEventPayload {
+            channel_id: Some(channel_id.to_string()),
+            entity_metadata: None,
+            name: title.to_string(),
+            privacy_level: PrivacyLevel::GuildOnly,
+            scheduled_start_time: start_time,
+            scheduled_end_time: end_time,
+            description: description.map(|d| d.to_string()),
+            entity_type: if is_stage {
+                EntityType::StageInstance
+            } else {
+                EntityType::Voice
+            },
+            image: image.map(|i| i.to_string()),
+        };
+        let url = format!("{}/guilds/{}/scheduled-events", self.base_url(), guild_id);
+        let resp = self.inner.post(&url).json(&payload).send().await?;
+        if resp.status().is_success() {
+            let event = resp.json::<serenity_models::ScheduledEvent>().await?;
+            Ok(event)
+        } else {
+            Err(Error::CustomStatus(
+                resp.status(),
+                format!("{:?}", resp.bytes().await?),
+            ))
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub async fn create_scheduled_external_event(
+        &self,
+        guild_id: &str,
+        location: &str,
+        title: &str,
+        description: Option<&str>,
+        start_time: NaiveDateTime,
+        end_time: NaiveDateTime,
+        image: Option<&str>,
+    ) -> Result<serenity_models::ScheduledEvent, Error> {
+        let payload = CreateScheduledEventPayload {
+            channel_id: None,
+            entity_metadata: Some(EntityMetaData {
+                location: location.to_string(),
+            }),
+            name: title.to_string(),
+            privacy_level: PrivacyLevel::GuildOnly,
+            scheduled_start_time: start_time,
+            scheduled_end_time: Some(end_time),
+            description: description.map(|d| d.to_string()),
+            entity_type: EntityType::External,
+            image: image.map(|i| i.to_string()),
+        };
+        let url = format!("{}/guilds/{}/scheduled-events", self.base_url(), guild_id);
+        let resp = self.inner.post(&url).json(&payload).send().await?;
+        if resp.status().is_success() {
+            let event = resp.json::<serenity_models::ScheduledEvent>().await?;
+            Ok(event)
+        } else {
+            Err(Error::CustomStatus(
+                resp.status(),
+                format!("{:?}", resp.bytes().await?),
+            ))
+        }
+    }
+
+    pub async fn create_channel_invitation(
+        &self,
+        channel_id: &str,
+        max_age: u32,
+    ) -> Result<Invitation, Error> {
+        let url = &format!("{}/channels/{}/invites", self.base_url(), channel_id);
+        let inv_result = self
+            .inner
+            .post(url)
+            .json(&serde_json::json!({
+                "max_age": max_age,
+            }))
+            .send()
+            .await?;
+        if inv_result.status().is_success() {
+            let inv = inv_result.json::<Invitation>().await?;
+            Ok(inv)
+        } else {
+            Err(Error::CustomStatus(
+                inv_result.status(),
+                format!("{:?}", inv_result.bytes().await?),
+            ))
+        }
+    }
+    pub async fn post(
+        &self,
+        url: &str,
+        body: &serde_json::Value,
+    ) -> Result<serde_json::Value, Error> {
+        let url = format!("{}/{}", self.base_url(), url);
+        let resp = self.inner.post(&url).json(body).send().await?;
+        if resp.status().is_success() {
+            let channels = resp.json::<serde_json::Value>().await?;
+            Ok(channels)
+        } else {
+            Err(Error::CustomStatus(
+                resp.status(),
+                format!("{:?}", resp.bytes().await?),
+            ))
+        }
+    }
 }
 
 impl AsRef<reqwest::Client> for Client {
     fn as_ref(&self) -> &reqwest::Client {
         &self.inner
     }
+}
+
+// ScheduledEvent Models
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CreateScheduledEventPayload {
+    pub channel_id: Option<String>,
+    pub entity_metadata: Option<EntityMetaData>,
+    pub name: String,
+    pub privacy_level: PrivacyLevel,
+    pub scheduled_start_time: NaiveDateTime,
+    pub scheduled_end_time: Option<NaiveDateTime>,
+    pub description: Option<String>,
+    pub entity_type: EntityType,
+    pub image: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct UpdateScheduledEventPayload {
+    pub channel_id: Option<String>,
+    pub entity_metadata: Option<EntityMetaData>,
+    pub name: String,
+    pub privacy_level: PrivacyLevel,
+    pub scheduled_start_time: NaiveDateTime,
+    pub scheduled_end_time: Option<NaiveDateTime>,
+    pub description: Option<String>,
+    pub entity_type: EntityType,
+    pub status: EventStatus,
+    pub image: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct EntityMetaData {
+    pub location: String,
+}
+
+#[derive(Debug, Clone, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum PrivacyLevel {
+    GuildOnly = 2,
+}
+
+#[derive(Debug, Clone, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum EntityType {
+    StageInstance = 1,
+    Voice = 2,
+    External = 3,
+}
+
+#[derive(Debug, Clone, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum EventStatus {
+    Scheduled = 1,
+    Active = 2,
+    Completed = 3,
+    Cancelled = 4,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Invitation {
+    pub code: String,
 }

@@ -3,5 +3,10 @@ pub mod create;
 use actix_web::web;
 
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/events").service(create::create));
+    let json_cfg = web::JsonConfig::default().limit(12 * 1024 * 1024);
+    cfg.service(
+        web::scope("/events")
+            .app_data(json_cfg)
+            .service(create::create),
+    );
 }

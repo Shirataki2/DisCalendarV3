@@ -65,7 +65,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .extra("DEFAULT CURRENT_TIMESTAMP".into()),
                     )
-                    .col(ColumnDef::new(Event::DiscordEventId).string().not_null())
+                    .col(ColumnDef::new(Event::DiscordEventId).string())
                     .col(ColumnDef::new(Event::NotifyChannelId).string())
                     .to_owned(),
             )

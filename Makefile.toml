@@ -17,6 +17,10 @@ args = ["@@split(DOCKER_ARGUMENTS, )", "build", "${@}"]
 command = "docker-compose"
 args = ["@@split(DOCKER_ARGUMENTS, )", "up", "-d", "${@}"]
 
+[tasks.force]
+command = "docker-compose"
+args = ["@@split(DOCKER_ARGUMENTS, )", "up", "-d", "--force-recreate", "${@}"]
+
 [tasks.logs]
 command = "docker-compose"
 args = ["@@split(DOCKER_ARGUMENTS, )", "logs", "-f", "--tail=50", "${@}"]

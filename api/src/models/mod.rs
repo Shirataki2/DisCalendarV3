@@ -2,4 +2,6 @@
 
 pub mod prelude;
 
+pub mod billing;
+pub mod event;
 pub mod guild;

@@ -21,6 +21,7 @@ services:
     ports:
       - 15000:5000
     env_file:
+      - .env
       - .env.dev
   web:
     user: 1000:1000

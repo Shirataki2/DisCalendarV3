@@ -26,6 +26,12 @@ pub fn create_error(msg: &str) -> Error {
     Error::Custom(msg.to_string())
 }
 
+impl Error {
+    pub fn new(status: StatusCode, msg: &str) -> Error {
+        Error::CustomStatus(status, msg.to_string())
+    }
+}
+
 impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
