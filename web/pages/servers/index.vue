@@ -4,6 +4,10 @@ import ServerList from '@/components/servers/ServerList.vue'
 const { loading, setLoading } = useLoading()
 const { fetchUserGuilds } = useAuth()
 
+useHead({
+  title: 'サーバー一覧',
+})
+
 definePageMeta({
   middleware: ['auth'],
 })

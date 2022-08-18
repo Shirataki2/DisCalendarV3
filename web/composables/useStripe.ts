@@ -7,8 +7,11 @@ export type StripeProducts = {
 }
 
 export const useStripe = () => {
+  console.info(5)
   const getDonateProducts = async () => {
+    console.info(getApiUrl('/payment/donate'))
     const products = await $fetch<StripeProducts>(getApiUrl('/payment/donate'))
+    console.info(7)
     return products
   }
   return {

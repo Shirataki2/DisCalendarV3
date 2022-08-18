@@ -1,0 +1,23 @@
+#docs {
+  h1 {
+    margin: 1.7rem 0;
+  }
+  h2,h3,h4,h5,h6 {
+    margin: 1.3rem 0;
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+  p {
+    margin-bottom: 1.0rem;
+    margin-left: 0.4rem;
+  }
+  p, ul, ol {
+    font-size: 0.96rem;
+    line-height: 1.7;
+  }
+  ul, ol {
+    margin-left: 1.6rem;
+  }
+}

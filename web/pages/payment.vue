@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import { getApiUrl } from '~~/server'
+import { getApiUrl } from '@/server'
+
+useHead({
+  title: '決済結果',
+})
 
 const simpleCardLayout = {
   cols: 12,

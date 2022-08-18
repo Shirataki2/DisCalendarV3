@@ -7,12 +7,13 @@ import {
   mdiLogin,
   mdiLogout,
   mdiGift,
+  mdiBookOpenPageVariant,
+  mdiAccountSupervisor,
 } from '@mdi/js'
-import { useTheme } from 'vuetify'
 import { Discord } from '@/types'
 import ServerNav from '@/components/application/ServerNav.vue'
 
-const theme = useTheme()
+const { toggleTheme } = useUI()
 const { isLoggedin } = useAuth()
 
 type LinkItem = {
@@ -35,11 +36,6 @@ type FuncItem = {
 }
 
 type Item = LinkItem | FuncItem
-
-const toggleTheme = () => {
-  theme.global.name.value =
-    theme.global.name.value === 'myLightTheme' ? 'myDarkTheme' : 'myLightTheme'
-}
 
 const items = ref<Item[]>([
   {
@@ -81,15 +77,17 @@ const items = ref<Item[]>([
     icon: mdiGithub,
     external: true,
   },
-])
-
-const appendItems = ref<Item[]>([
   {
     ty: 'link',
-    title: 'ログアウト',
-    to: '/logout',
-    icon: mdiLogout,
-    login: true,
+    title: '利用規約',
+    to: '/tos',
+    icon: mdiBookOpenPageVariant,
+  },
+  {
+    ty: 'link',
+    title: 'プライバシーポリシー',
+    to: '/privacy',
+    icon: mdiAccountSupervisor,
   },
   {
     ty: 'func',
@@ -97,7 +95,16 @@ const appendItems = ref<Item[]>([
     icon: mdiThemeLightDark,
     action: toggleTheme,
   },
+  {
+    ty: 'link',
+    title: 'ログアウト',
+    to: '/logout',
+    icon: mdiLogout,
+    login: true,
+  },
 ])
+
+const appendItems = ref<Item[]>()
 
 const isShow = (item: Item) => {
   if (item.login) {
@@ -146,7 +153,6 @@ const show = computed({
           :title="item.title"
           :target="item.ty === 'link' && item.external ? '_blank' : undefined"
           :rel="item.ty === 'link' && item.external ? 'noreferrer' : undefined"
-          :append-icon="item.ty === 'func' ? item.icon : undefined"
           @click="item.ty === 'func' && item.action()"
         ></v-list-item>
       </template>

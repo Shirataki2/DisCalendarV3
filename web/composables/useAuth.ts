@@ -1,6 +1,9 @@
 import { getApiUrl } from '@/server'
 import { Discord } from '@/types'
 
+const CDN_BASE_URL = 'https://cdn.discordapp.com'
+const DEFALUT_AVATAR_PATH = '/images/default-guild-icon.png'
+
 export const useAuth = () => {
   const { user, userGuilds } = useUser()
   const isLoggedin = computed(() => user.value !== null)
@@ -26,6 +29,13 @@ export const useAuth = () => {
     }
   }
 
+  const currentUserAvatarUrl = computed(() => {
+    if (!user.value?.avatar) {
+      return DEFALUT_AVATAR_PATH
+    }
+    return `${CDN_BASE_URL}/avatars/${user.value.id}/${user.value.avatar}.png`
+  })
+
   return {
     user,
     userGuilds,
@@ -33,5 +43,6 @@ export const useAuth = () => {
     logout,
     fetchUser,
     fetchUserGuilds,
+    currentUserAvatarUrl,
   }
 }

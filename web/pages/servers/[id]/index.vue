@@ -70,6 +70,25 @@ const getStyle = (style: any) => {
     color: luminance > 160 ? '#000' : '#fff',
   }
 }
+
+const { userGuilds } = useAuth()
+
+const currentGuild = computed(() => {
+  const { path } = useRoute()
+  const match = path.match(/^\/servers\/(\d+)$/)
+  if (match) {
+    const id = match[1]
+    return userGuilds.value?.invited.find(guild => guild.id === id)
+  }
+  return undefined
+})
+
+const head = computed(() => {
+  const guild = currentGuild.value
+  return { title: guild ? guild.name : null }
+})
+
+useHead(head)
 </script>
 
 <template>

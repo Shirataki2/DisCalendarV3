@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   },
   css: [
     '@/assets/styles/main.scss',
+    '@/assets/styles/docs.scss',
     '@/assets/styles/calendar.scss',
     'vuetify/styles',
     'vue-cal/dist/vuecal.css',
@@ -14,7 +15,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
-  modules: ['nuxt-proxy', '@vueuse/nuxt'],
+  modules: ['nuxt-proxy', '@vueuse/nuxt', '@nuxt/content'],
   vite: {
     define: {
       'process.env.DEBUG': false,
@@ -45,6 +46,14 @@ export default defineNuxtConfig({
           '^/v3': '',
         },
         pathFilter: ['/v3/**'],
+      },
+      {
+        target: 'http://localhost:15000',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/cv3': '',
+        },
+        pathFilter: ['/cv3/**'],
       },
     ],
   },

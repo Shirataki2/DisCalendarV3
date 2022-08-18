@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-const { user } = useAuth()
+useHead({
+  title: 'ホーム',
+})
 </script>
 
 <template>
-  <div>
-    Index Page
-    <p>{{ user }}</p>
-  </div>
+  <div>Index Page</div>
 </template>
 
 <style scoped></style>

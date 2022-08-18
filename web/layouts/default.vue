@@ -1,17 +1,12 @@
 <script lang="ts" setup>
-import { mdiThemeLightDark } from '@mdi/js'
 import { useTheme } from 'vuetify'
-import DatePicker from '~~/components/calendar/DatePicker.vue'
-import NavDrawer from '~~/components/application/NavDrawer.vue'
-import LoadingBar from '~~/components/LoadingBar.vue'
+import DatePicker from '@/components/calendar/DatePicker.vue'
+import NavDrawer from '@/components/application/NavDrawer.vue'
+import AvatarMenu from '@/components/ui/AvatarMenu.vue'
 
 const theme = useTheme()
-const { fetchUser, logout } = useAuth()
+const { fetchUser, logout, isLoggedin } = useAuth()
 const showDrawer = ref<boolean | undefined>(undefined)
-const toggleTheme = () => {
-  theme.global.name.value =
-    theme.global.name.value === 'myLightTheme' ? 'myDarkTheme' : 'myLightTheme'
-}
 
 const headerColor = computed(() => {
   return theme.global.name.value === 'myLightTheme' ? 'white' : 'primary'
@@ -43,9 +38,9 @@ onMounted(async () => {
       <DatePicker v-if="isCalendarPage" />
       <v-spacer />
       <template #append>
-        <v-btn :icon="mdiThemeLightDark" @click="toggleTheme"></v-btn>
+        <AvatarMenu v-if="isLoggedin" />
       </template>
-      <LoadingBar :duration="1000" />
+      <NuxtLoadingIndicator />
     </v-app-bar>
     <v-main>
       <slot />

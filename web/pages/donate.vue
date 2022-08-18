@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import type Stripe from 'stripe'
-import { getApiUrl } from '~~/server'
+import { getApiUrl } from '@/server'
+
+useHead({
+  title: '寄付',
+})
 
 definePageMeta({
   middleware: ['auth'],
 })
 
 const { getDonateProducts } = useStripe()
-
 const { products, prices } = await getDonateProducts()
 
 type Product = {

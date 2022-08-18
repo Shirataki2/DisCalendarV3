@@ -308,6 +308,7 @@ watch(date, () => {
                     :disabled="sending"
                     :prepend-icon="mdiCalendar"
                     :rules="[rules.required]"
+                    class="mt-4"
                   />
                 </v-col>
                 <v-col cols="12" sm="6">
@@ -317,6 +318,7 @@ watch(date, () => {
                     :disabled="sending"
                     :prepend-icon="mdiCalendar"
                     :rules="[rules.required]"
+                    class="mt-2"
                   />
                 </v-col>
                 <v-col cols="12" class="mb-n3">

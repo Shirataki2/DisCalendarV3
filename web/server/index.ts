@@ -1,6 +1,6 @@
 export const getApiUrl = (url: string): string => {
   // const baseUrl = process.env.API_ENDPOINT || 'http://localhost:15000'
-  const baseUrl = '/v3'
+  const baseUrl = process.client ? '/v3' : 'http://api:5000'
   return `${baseUrl}${url}`
 }
 
