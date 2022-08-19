@@ -48,6 +48,7 @@ const dateModel = computed({
   >
     <template #activator="{ props: menuProps }">
       <v-text-field
+        class="daytime"
         :model-value="dayjs(dateModel).format('YYYY/MM/DD HH:mm')"
         density="comfortable"
         variant="underlined"

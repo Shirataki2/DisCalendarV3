@@ -10,32 +10,13 @@ import {
   mdiBookOpenPageVariant,
   mdiAccountSupervisor,
 } from '@mdi/js'
+import { Item } from 'types/listItem'
 import { Discord } from '@/types'
+
 import ServerNav from '@/components/application/ServerNav.vue'
+import MenuList from '@/components/ui/MenuList.vue'
 
 const { toggleTheme } = useUI()
-const { isLoggedin } = useAuth()
-
-type LinkItem = {
-  title: string
-  to: string
-  icon: string
-  external?: boolean
-  login?: boolean
-  logout?: boolean
-  ty: 'link'
-}
-
-type FuncItem = {
-  title: string
-  icon: string
-  login?: boolean
-  logout?: boolean
-  action: () => void
-  ty: 'func'
-}
-
-type Item = LinkItem | FuncItem
 
 const items = ref<Item[]>([
   {
@@ -49,6 +30,7 @@ const items = ref<Item[]>([
     title: 'サーバー一覧',
     to: '/servers',
     icon: mdiConsole,
+    login: true,
   },
   {
     ty: 'link',
@@ -59,7 +41,7 @@ const items = ref<Item[]>([
   },
   {
     ty: 'link',
-    title: '寄付',
+    title: '支援',
     to: '/donate',
     icon: mdiGift,
   },
@@ -104,17 +86,7 @@ const items = ref<Item[]>([
   },
 ])
 
-const appendItems = ref<Item[]>()
-
-const isShow = (item: Item) => {
-  if (item.login) {
-    return isLoggedin.value
-  }
-  if (item.logout) {
-    return !isLoggedin.value
-  }
-  return true
-}
+const appendItems = ref<Item[]>([])
 
 const props = withDefaults(
   defineProps<{
@@ -139,44 +111,13 @@ const show = computed({
 
 <template>
   <v-navigation-drawer v-model="show">
-    <v-list nav>
-      <ServerNav />
-      <template v-for="item in items">
-        <v-list-item
-          v-if="isShow(item)"
-          :key="item.title"
-          color="blue"
-          :to="item.ty === 'link' && !item.external ? item.to : undefined"
-          :href="item.ty === 'link' && item.external ? item.to : undefined"
-          :link="item.ty === 'link'"
-          :prepend-icon="item.icon"
-          :title="item.title"
-          :target="item.ty === 'link' && item.external ? '_blank' : undefined"
-          :rel="item.ty === 'link' && item.external ? 'noreferrer' : undefined"
-          @click="item.ty === 'func' && item.action()"
-        ></v-list-item>
+    <MenuList :items="items" nav>
+      <template #prepend>
+        <ServerNav />
       </template>
-    </v-list>
+    </MenuList>
     <template #append>
-      <v-list nav>
-        <template v-for="item in appendItems">
-          <v-list-item
-            v-if="isShow(item)"
-            :key="item.title"
-            color="blue"
-            :to="item.ty === 'link' && !item.external ? item.to : undefined"
-            :href="item.ty === 'link' && item.external ? item.to : undefined"
-            :link="item.ty === 'link'"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :target="item.ty === 'link' && item.external ? '_blank' : undefined"
-            :rel="
-              item.ty === 'link' && item.external ? 'noreferrer' : undefined
-            "
-            @click="item.ty === 'func' && item.action()"
-          ></v-list-item>
-        </template>
-      </v-list>
+      <MenuList :items="appendItems"></MenuList>
     </template>
   </v-navigation-drawer>
 </template>

@@ -3,6 +3,7 @@ import { mdiCalendar, mdiVolumeHigh, mdiMapMarker } from '@mdi/js'
 import dayjs from 'dayjs'
 import { Discord } from '@/types'
 import DaytimePicker from '@/components/ui/DaytimePicker.vue'
+import ColorPicker from '@/components/calendar/ColorPicker.vue'
 
 enum EventPlace {
   StageChannel = 'stage_channel',
@@ -23,6 +24,7 @@ const completed = ref(false)
 
 const title = ref<string>('')
 const description = ref<string>('')
+const eventColor = ref<string>('#FF0000')
 const startDate = ref<Date>(dayjs().startOf('hour').add(1, 'hour').toDate())
 const endDate = ref<Date>(dayjs().startOf('hour').add(2, 'hour').toDate())
 const allDay = ref<boolean>(false)
@@ -300,6 +302,9 @@ watch(date, () => {
                     label="作成時に通知"
                     hide-details="auto"
                   ></v-checkbox>
+                </v-col>
+                <v-col cols="12">
+                  <ColorPicker v-model="eventColor" :disabled="sending" />
                 </v-col>
                 <v-col cols="12" sm="6">
                   <DaytimePicker

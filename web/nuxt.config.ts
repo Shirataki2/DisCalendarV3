@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
+const { MICROCMS_SERVICE_DOMAIN, MICROCMS_API_KEY } = process.env
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -16,6 +17,11 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   modules: ['nuxt-proxy', '@vueuse/nuxt', '@nuxt/content'],
+  runtimeConfig: {
+    microcmsServiceDomain: MICROCMS_SERVICE_DOMAIN,
+    microcmsApiKey: MICROCMS_API_KEY,
+    public: {},
+  },
   vite: {
     define: {
       'process.env.DEBUG': false,

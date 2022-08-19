@@ -3,7 +3,7 @@ import type Stripe from 'stripe'
 import { getApiUrl } from '@/server'
 
 useHead({
-  title: '寄付',
+  title: '支援',
 })
 
 definePageMeta({
