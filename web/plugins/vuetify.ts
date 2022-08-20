@@ -25,7 +25,7 @@ const myDarkTheme: ThemeDefinition = {
     secondary: '#FFC107',
     background: '#141414',
     surface: '#2A2A2A',
-    error: '#CD0D0D',
+    error: '#CC0C0C',
     warning: '#FFC110',
     info: '#03A9F4',
     success: '#48BE3C',

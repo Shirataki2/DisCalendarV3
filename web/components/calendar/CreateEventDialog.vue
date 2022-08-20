@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-import { mdiCalendar, mdiVolumeHigh, mdiMapMarker } from '@mdi/js'
+import {
+  mdiCalendar,
+  mdiVolumeHigh,
+  mdiMapMarker,
+  mdiBell,
+  mdiPlus,
+} from '@mdi/js'
 import dayjs from 'dayjs'
 import { Discord } from '@/types'
 import DaytimePicker from '@/components/ui/DaytimePicker.vue'
 import ColorPicker from '@/components/calendar/ColorPicker.vue'
+import NotificationPicker from '@/components/calendar/NotificationPicker.vue'
 
 enum EventPlace {
   StageChannel = 'stage_channel',
@@ -13,6 +20,11 @@ enum EventPlace {
 
 const { date } = useDate()
 const { showSnackbar, message: snackMessage, color } = useSnackbar()
+const { theme } = useUI()
+
+const iconColor = computed(() => {
+  return theme.current.value.dark ? '#999999' : '#7a7a7a'
+})
 
 const errorMessages = ref<string[]>([])
 
@@ -28,7 +40,6 @@ const eventColor = ref<string>('#FF0000')
 const startDate = ref<Date>(dayjs().startOf('hour').add(1, 'hour').toDate())
 const endDate = ref<Date>(dayjs().startOf('hour').add(2, 'hour').toDate())
 const allDay = ref<boolean>(false)
-const notifyOnCreate = ref<boolean>(false)
 const createDiscordEvent = ref<boolean>(false)
 const createInvitationUrl = ref<boolean>(false)
 const place = ref<EventPlace>(EventPlace.StageChannel)
@@ -36,6 +47,7 @@ const selectedStageChannel = ref<string>('')
 const selectedVoiceChannel = ref<string>('')
 const inputtedSomewhereElse = ref<string>('')
 const coverImageFile = ref<File[]>([] as File[])
+const notificationsArray = ref([60])
 
 const invitationUrl = ref()
 
@@ -173,8 +185,8 @@ const submit = async () => {
   const ev = await createEvent(guildId, {
     name: title.value,
     description: description.value,
-    color: '#0099ff', // TODO: ユーザーによって変更できるようにする
-    notifications: '[]', // TODO: Notifications
+    color: color.value,
+    notifications: JSON.stringify(notificationsArray.value),
     start_at: dayjs(startDate.value).format('YYYY-MM-DDTHH:mm:ss'),
     end_at: dayjs(endDate.value).format('YYYY-MM-DDTHH:mm:ss'),
     is_all_day: allDay.value,
@@ -209,16 +221,19 @@ const validate = () => {
   const now = dayjs()
   const start = dayjs(startDate.value)
   const end = dayjs(endDate.value)
-  if (start.isBefore(now)) {
-    errorMessages.value.push('開始時間は現在時刻以降で入力してください')
-  }
+
+  const discordFlag = createDiscordEvent.value
   if (end.isBefore(start)) {
     errorMessages.value.push('終了時間は開始時間以降で入力してください')
   }
-  if (end.isBefore(now)) {
-    errorMessages.value.push('終了時間は現在時刻以降で入力してください')
+  if (discordFlag) {
+    if (start.isBefore(now)) {
+      errorMessages.value.push('開始時間は現在時刻以降で入力してください')
+    }
+    if (end.isBefore(now)) {
+      errorMessages.value.push('終了時間は現在時刻以降で入力してください')
+    }
   }
-  const discordFlag = createDiscordEvent.value
   if (discordFlag) {
     if (place.value === EventPlace.StageChannel) {
       if (!selectedStageChannel.value) {
@@ -243,6 +258,18 @@ const validate = () => {
   return errorMessages.value.length === 0
 }
 
+const removeNotification = (index: number) => {
+  const notifications = notificationsArray.value
+  notifications.splice(index, 1)
+  notificationsArray.value = notifications
+}
+
+const addNotification = () => {
+  const notifications = notificationsArray.value
+  notifications.push(notificationsArray.value.length * 60 + 60)
+  notificationsArray.value = notifications
+}
+
 watch(date, () => {
   const dt = date.value
   dt.setHours(dayjs().hour())
@@ -262,8 +289,8 @@ watch(date, () => {
           <v-alert
             v-if="errorMessages.length > 0"
             type="error"
-            :elevation="1"
             class="mb-2"
+            variant="flat"
           >
             <ul>
               <li v-for="message in errorMessages" :key="message">
@@ -285,7 +312,7 @@ watch(date, () => {
                     :rules="[rules.required, rules.max(30)]"
                   />
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="12" sm="3">
                   <v-checkbox
                     v-model="allDay"
                     label="終日"
@@ -294,17 +321,29 @@ watch(date, () => {
                     hide-details="auto"
                   ></v-checkbox>
                 </v-col>
-                <v-col cols="6">
-                  <v-checkbox
-                    v-model="notifyOnCreate"
-                    class="ml-n2"
-                    :disabled="sending"
-                    label="作成時に通知"
-                    hide-details="auto"
-                  ></v-checkbox>
+                <v-col cols="12" sm="9">
+                  <ColorPicker v-model="eventColor" :disabled="sending" />
                 </v-col>
                 <v-col cols="12">
-                  <ColorPicker v-model="eventColor" :disabled="sending" />
+                  <v-icon class="mr-4" :color="iconColor">
+                    {{ mdiBell }}
+                  </v-icon>
+                  <NotificationPicker
+                    v-for="(ntfn, i) in notificationsArray"
+                    :key="ntfn"
+                    v-model="notificationsArray[i]"
+                    @remove="removeNotification(i)"
+                  />
+                  <v-btn
+                    v-if="notificationsArray.length < 10"
+                    icon
+                    variant="text"
+                    @click="addNotification"
+                  >
+                    <v-icon>
+                      {{ mdiPlus }}
+                    </v-icon>
+                  </v-btn>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <DaytimePicker
@@ -313,6 +352,7 @@ watch(date, () => {
                     :disabled="sending"
                     :prepend-icon="mdiCalendar"
                     :rules="[rules.required]"
+                    :allday="allDay"
                     class="mt-4"
                   />
                 </v-col>
@@ -323,6 +363,7 @@ watch(date, () => {
                     :disabled="sending"
                     :prepend-icon="mdiCalendar"
                     :rules="[rules.required]"
+                    :allday="allDay"
                     class="mt-2"
                   />
                 </v-col>
@@ -354,7 +395,7 @@ watch(date, () => {
                           この機能を正常に機能させるためには、
                           Discordのサーバーの設定からコミュニティの有効化を行う必要があります。
                         </p>
-                        <p class="small-note px-2 pb-8">
+                        <p class="small-note px-2">
                           詳しくは
                           <a
                             href="https://support.discord.com/hc/en-us/articles/360047132851"
@@ -363,6 +404,9 @@ watch(date, () => {
                             こちら
                           </a>
                           をご覧ください。
+                        </p>
+                        <p class="small-note px-2 py-5">
+                          また、Discordの仕様上、このオプションにチェックを入れた場合現在時刻より前に開始時刻を設定することはできません。
                         </p>
                         <div
                           :class="
@@ -405,6 +449,7 @@ watch(date, () => {
                             title="name"
                             variant="underlined"
                             label="ステージチャンネルを選択"
+                            no-data-text="ステージチャンネルが見つかりません"
                           ></v-select>
                           <v-select
                             v-else-if="place === EventPlace.VoiceChannel"
@@ -419,6 +464,7 @@ watch(date, () => {
                             size="confortable"
                             variant="underlined"
                             label="ボイスチャンネルを選択"
+                            no-data-text="ボイスチャンネルが見つかりません"
                           ></v-select>
                           <v-text-field
                             v-else-if="place === EventPlace.SomewhereElse"

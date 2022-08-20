@@ -59,7 +59,17 @@ const swatches = [
           :disabled="props.disabled"
         >
           <template #prepend>
-            <v-icon :color="color">{{ mdiSquareRounded }}</v-icon>
+            <i class="color-icon">
+              <svg
+                class="color-svg"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                role="img"
+                aria-hidden="true"
+              >
+                <path :d="mdiSquareRounded" />
+              </svg>
+            </i>
           </template>
         </v-text-field>
       </template>
@@ -81,4 +91,15 @@ const swatches = [
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+i.color-icon {
+  width: 24px;
+  height: 24px;
+}
+
+svg.color-svg {
+  width: 24px;
+  height: 24px;
+  fill: v-bind(color);
+}
+</style>

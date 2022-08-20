@@ -13,12 +13,14 @@ const props = withDefaults(
     label: string | undefined
     prependIcon: string | undefined
     rules: Rule[]
+    allday?: boolean
   }>(),
   {
     modelValue: () => new Date(),
     label: undefined,
     prependIcon: undefined,
     rules: () => [],
+    allday: false,
   }
 )
 
@@ -49,7 +51,9 @@ const dateModel = computed({
     <template #activator="{ props: menuProps }">
       <v-text-field
         class="daytime"
-        :model-value="dayjs(dateModel).format('YYYY/MM/DD HH:mm')"
+        :model-value="
+          dayjs(dateModel).format(`YYYY/MM/DD${allday ? '' : ' HH:mm'}`)
+        "
         density="comfortable"
         variant="underlined"
         :label="label"
@@ -70,6 +74,7 @@ const dateModel = computed({
         locale="ja"
         week-start="0"
         alt-position
+        :enable-time-picker="!allday"
         @closed="show = false"
       />
     </div>

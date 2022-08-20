@@ -28,3 +28,18 @@ args = ["@@split(DOCKER_ARGUMENTS, )", "logs", "-f", "--tail=50", "${@}"]
 [tasks.bash]
 command = "docker-compose"
 args = ["@@split(DOCKER_ARGUMENTS, )", "exec", "${@}", "bash"]
+
+[tasks.docs-install]
+command = "bash"
+source = """
+cd docs
+yarn
+cd ..
+"""
+
+[tasks.docs-dev]
+command = "bash"
+source = """
+cd docs
+yarn dev
+"""

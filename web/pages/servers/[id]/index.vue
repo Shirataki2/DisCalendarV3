@@ -72,9 +72,9 @@ const getStyle = (style: any) => {
 }
 
 const { userGuilds } = useAuth()
+const { path } = useRoute()
 
 const currentGuild = computed(() => {
-  const { path } = useRoute()
   const match = path.match(/^\/servers\/(\d+)$/)
   if (match) {
     const id = match[1]
@@ -97,77 +97,80 @@ useHead(head)
       <v-row>
         <v-col lg="10" offset-lg="1" xxl="8" offset-xxl="2">
           <v-card class="pa-1">
-            <!-- eslint-disable vue/no-v-model-argument -->
-            <vue-cal
-              ref="vuecal"
-              v-model:active-view="dateView"
-              hide-view-selector
-              class="calendar"
-              locale="ja"
-              events-on-month-view="short"
-              start-week-on-sunday
-              :selected-date="date"
-              :events="events"
-              :editable-events="{
-                title: false,
-                drag: true,
-                resize: true,
-                delete: true,
-                create: true,
-              }"
-              :snap-to-time="15"
-              :show-allday-events="'short'"
-              @cell-focus="setDate($event)"
-            >
-              <template #title="{ view }">
-                <span v-if="view.id === 'years'">
-                  {{ view.startDate.getFullYear() }}年 -
-                  {{ view.endDate.getFullYear() }}年
-                </span>
-                <!-- Using Vue Cal injected Date prototypes -->
-                <span v-else-if="view.id === 'year'">{{
-                  view.startDate.format('YYYY年')
-                }}</span>
-                <span v-else-if="view.id === 'month'">{{
-                  view.startDate.format('YYYY/M')
-                }}</span>
-                <span v-else-if="view.id === 'week'">
-                  {{ view.startDate.format('YYYY年') }}
-                  {{ view.startDate.format('M/D') }} -
-                  {{
-                    view.endDate.format('YYYY') ===
-                    view.startDate.format('YYYY')
-                      ? ''
-                      : view.endDate.format('YYYY年')
-                  }}
-                  {{ view.endDate.format('M/D') }}
-                </span>
-                <span v-else-if="view.id === 'day'">{{
-                  view.startDate.format('YYYY年M月D日 (dddd)')
-                }}</span>
-              </template>
-              <template #event="{ event, view }">
-                <div class="event-content" :style="getStyle(event)">
-                  <div class="vuecal__event-title">
-                    {{ event.title }}
-                  </div>
-                  <div v-if="view !== 'month'" class="vuecal__event-time">
-                    {{ event.start.format('HH:mm') }} -
-                    {{ event.end.format('HH:mm') }}
-                  </div>
-                </div>
-              </template>
-              <template #weekday-heading="{ heading, view }">
-                <span :class="dateAttr(heading['label'])">
-                  <span v-if="view.id == 'week'">
-                    {{ heading.date.getDate() }}
+            <ClientOnly>
+              <!-- eslint-disable vue/no-v-model-argument -->
+              <vue-cal
+                ref="vuecal"
+                v-model:active-view="dateView"
+                hide-view-selector
+                class="calendar"
+                locale="ja"
+                events-on-month-view="short"
+                start-week-on-sunday
+                :selected-date="date"
+                :events="events"
+                :editable-events="{
+                  title: false,
+                  drag: true,
+                  resize: true,
+                  delete: true,
+                  create: true,
+                }"
+                :snap-to-time="15"
+                :show-allday-events="'short'"
+                @cell-focus="setDate($event)"
+              >
+                <template #title="{ view }">
+                  <span v-if="view.id === 'years'">
+                    {{ view.startDate.getFullYear() }}年 -
+                    {{ view.endDate.getFullYear() }}年
                   </span>
-                  <span v-if="view.id == 'month'">
-                    {{ heading.label }}
+                  <!-- Using Vue Cal injected Date prototypes -->
+                  <span v-else-if="view.id === 'year'">{{
+                    view.startDate.format('YYYY年')
+                  }}</span>
+                  <span v-else-if="view.id === 'month'">{{
+                    view.startDate.format('YYYY/M')
+                  }}</span>
+                  <span v-else-if="view.id === 'week'">
+                    {{ view.startDate.format('YYYY年') }}
+                    {{ view.startDate.format('M/D') }} -
+                    {{
+                      view.endDate.format('YYYY') ===
+                      view.startDate.format('YYYY')
+                        ? ''
+                        : view.endDate.format('YYYY年')
+                    }}
+                    {{ view.endDate.format('M/D') }}
                   </span>
-                </span>
-              </template>
-            </vue-cal>
+                  <span v-else-if="view.id === 'day'">{{
+                    view.startDate.format('YYYY年M月D日 (dddd)')
+                  }}</span>
+                </template>
+                <template #event="{ event, view }">
+                  <div class="event-content" :style="getStyle(event)">
+                    <div class="vuecal__event-title">
+                      {{ event.title }}
+                    </div>
+                    <div v-if="view !== 'month'" class="vuecal__event-time">
+                      {{ event.start.format('HH:mm') }} -
+                      {{ event.end.format('HH:mm') }}
+                    </div>
+                  </div>
+                </template>
+                <template #weekday-heading="{ heading, view }">
+                  <span :class="dateAttr(heading['label'])">
+                    <span v-if="view.id == 'week'">
+                      {{ heading.date.getDate() }}
+                    </span>
+                    <span v-if="view.id == 'month'">
+                      {{ heading.label }}
+                    </span>
+                  </span>
+                </template>
+              </vue-cal>
+            </ClientOnly>
+
             <v-tooltip location="left">
               <template #activator="{ props }">
                 <v-btn
